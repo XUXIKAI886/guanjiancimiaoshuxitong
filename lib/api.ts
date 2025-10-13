@@ -46,7 +46,7 @@ export async function callAI(prompt: string, content: string): Promise<string> {
           },
         ],
         temperature: 0.7,
-        max_tokens: 16000, // 增加到16000以支持大量描述数据
+        max_tokens: 8000, // 降低到8000,配合更小的批次大小
       }),
     });
 
@@ -80,7 +80,7 @@ export async function optimizeKeywords(
   platform: Platform = 'meituan',
   onProgress?: (index: number, total: number) => void
 ): Promise<string[]> {
-  const BATCH_SIZE = 80; // 每批处理80个关键词(关键词较短,可以多处理些)
+  const BATCH_SIZE = 30; // 减小批次大小,确保稳定性(从80降到30)
 
   // 根据平台选择提示词
   const keywordPrompt = platform === 'eleme' ? KEYWORD_PROMPT_ELEME : KEYWORD_PROMPT_MEITUAN;
@@ -95,21 +95,39 @@ export async function optimizeKeywords(
       console.log('AI 原始输出:', output);
       console.log('输入行数:', keywords.length);
 
-      const lines = output.split('\n').filter(line => line.trim());
+      // 按换行符分割,但保留空行(空行也算一行)
+      const lines = output.split('\n').map(line => line.trim());
       console.log('输出行数:', lines.length);
 
-      if (lines.length !== keywords.length) {
+      // 智能修复:如果输出少于输入,补充缺失的行
+      if (lines.length < keywords.length) {
         console.warn(`⚠️ 数据不匹配: 输入${keywords.length}行,但输出${lines.length}行`);
 
-        if (lines.length < keywords.length) {
-          for (let i = lines.length; i < keywords.length; i++) {
-            lines.push(keywords[i] + '【待重新生成】');
-            console.warn(`⚠️ 第${i + 1}行数据缺失,使用原始关键词: ${keywords[i]}`);
-          }
+        // 找出已处理的行数
+        const processedCount = lines.length;
+
+        // 补充剩余未处理的行
+        for (let i = processedCount; i < keywords.length; i++) {
+          lines.push(keywords[i] + '【待重新生成】');
+          console.warn(`⚠️ 第${i + 1}行数据缺失,使用原始关键词: ${keywords[i]}`);
+        }
+      } else if (lines.length > keywords.length) {
+        console.warn(`⚠️ 输出行数多于输入: 输入${keywords.length}行,输出${lines.length}行,将截断多余行`);
+        lines.splice(keywords.length);
+      }
+
+      // 过滤掉完全空白的行
+      const finalLines = lines.filter(line => line.length > 0);
+      if (finalLines.length !== keywords.length) {
+        console.warn(`⚠️ 过滤空行后数据不匹配,重新补充`);
+        // 如果过滤后不够,用原始关键词填充
+        while (finalLines.length < keywords.length) {
+          const idx = finalLines.length;
+          finalLines.push(keywords[idx] + '【待重新生成】');
         }
       }
 
-      return lines;
+      return finalLines;
     } catch (error) {
       console.error('关键词优化失败:', error);
       throw error;
@@ -133,17 +151,27 @@ export async function optimizeKeywords(
       const input = batch.join('\n');
       const output = await callAI(keywordPrompt, input);
 
-      const lines = output.split('\n').filter(line => line.trim());
+      const lines = output.split('\n').map(line => line.trim());
 
-      // 补充缺失数据
+      // 智能修复:补充缺失数据或截断多余数据
       if (lines.length < batch.length) {
         console.warn(`⚠️ 第${i + 1}批数据不完整: 输入${batch.length}行,输出${lines.length}行`);
         for (let j = lines.length; j < batch.length; j++) {
           lines.push(batch[j] + '【待重新生成】');
         }
+      } else if (lines.length > batch.length) {
+        console.warn(`⚠️ 第${i + 1}批输出过多: 输入${batch.length}行,输出${lines.length}行,将截断`);
+        lines.splice(batch.length);
       }
 
-      allResults.push(...lines);
+      // 过滤空行并补充
+      const finalLines = lines.filter(line => line.length > 0);
+      while (finalLines.length < batch.length) {
+        const idx = finalLines.length;
+        finalLines.push(batch[idx] + '【待重新生成】');
+      }
+
+      allResults.push(...finalLines);
 
       // 报告进度
       if (onProgress) {
@@ -177,7 +205,7 @@ export async function generateDescriptions(
   products: string[],
   onProgress?: (index: number, total: number) => void
 ): Promise<string[]> {
-  const BATCH_SIZE = 50; // 每批处理50个产品(描述较长,减少批次大小)
+  const BATCH_SIZE = 20; // 减小批次大小,确保稳定性(从50降到20)
 
   // 如果数据量较小,直接处理
   if (products.length <= BATCH_SIZE) {
@@ -189,21 +217,29 @@ export async function generateDescriptions(
       console.log('AI 原始输出:', output);
       console.log('输入行数:', products.length);
 
-      const lines = output.split('\n').filter(line => line.trim());
+      const lines = output.split('\n').map(line => line.trim());
       console.log('输出行数:', lines.length);
 
-      if (lines.length !== products.length) {
+      // 智能修复
+      if (lines.length < products.length) {
         console.warn(`⚠️ 数据不匹配: 输入${products.length}行,但输出${lines.length}行`);
-
-        if (lines.length < products.length) {
-          for (let i = lines.length; i < products.length; i++) {
-            lines.push('描述生成失败,请重试: ' + products[i]);
-            console.warn(`⚠️ 第${i + 1}行数据缺失,产品名: ${products[i]}`);
-          }
+        for (let i = lines.length; i < products.length; i++) {
+          lines.push('描述生成失败,请重试: ' + products[i]);
+          console.warn(`⚠️ 第${i + 1}行数据缺失,产品名: ${products[i]}`);
         }
+      } else if (lines.length > products.length) {
+        console.warn(`⚠️ 输出行数多于输入: 输入${products.length}行,输出${lines.length}行,将截断`);
+        lines.splice(products.length);
       }
 
-      return lines;
+      // 过滤空行并补充
+      const finalLines = lines.filter(line => line.length > 0);
+      while (finalLines.length < products.length) {
+        const idx = finalLines.length;
+        finalLines.push('描述生成失败,请重试: ' + products[idx]);
+      }
+
+      return finalLines;
     } catch (error) {
       console.error('描述生成失败:', error);
       throw error;
@@ -227,17 +263,27 @@ export async function generateDescriptions(
       const input = batch.join('\n');
       const output = await callAI(DESCRIPTION_PROMPT, input);
 
-      const lines = output.split('\n').filter(line => line.trim());
+      const lines = output.split('\n').map(line => line.trim());
 
-      // 补充缺失数据
+      // 智能修复
       if (lines.length < batch.length) {
         console.warn(`⚠️ 第${i + 1}批数据不完整: 输入${batch.length}行,输出${lines.length}行`);
         for (let j = lines.length; j < batch.length; j++) {
           lines.push('描述生成失败,请重试: ' + batch[j]);
         }
+      } else if (lines.length > batch.length) {
+        console.warn(`⚠️ 第${i + 1}批输出过多: 输入${batch.length}行,输出${lines.length}行,将截断`);
+        lines.splice(batch.length);
       }
 
-      allResults.push(...lines);
+      // 过滤空行并补充
+      const finalLines = lines.filter(line => line.length > 0);
+      while (finalLines.length < batch.length) {
+        const idx = finalLines.length;
+        finalLines.push('描述生成失败,请重试: ' + batch[idx]);
+      }
+
+      allResults.push(...finalLines);
 
       // 报告进度
       if (onProgress) {

@@ -1,5 +1,9 @@
 // 美团关键词优化提示词(带表情符号)
-export const KEYWORD_PROMPT_MEITUAN = `# Role: 产品关键词优化助手(套餐版)
+export const KEYWORD_PROMPT_MEITUAN = `⚠️ 核心规则(最高优先级):
+输入 N 行 → 输出 N 行
+逐行处理,逐行输出,绝对不能遗漏任何一行!
+
+# Role: 产品关键词优化助手(套餐版)
 
 ## Profile:
 - Author: LangGPT
@@ -58,7 +62,11 @@ export const KEYWORD_PROMPT_MEITUAN = `# Role: 产品关键词优化助手(套�
 现在请直接处理用户输入的产品标题,输出优化后的关键词,无需其他解释。`;
 
 // 饿了么关键词优化提示词(无表情符号)
-export const KEYWORD_PROMPT_ELEME = `# Role: 产品关键词优化助手(套餐版-饿了么专用)
+export const KEYWORD_PROMPT_ELEME = `⚠️ 核心规则(最高优先级):
+输入 N 行 → 输出 N 行
+逐行处理,逐行输出,绝对不能遗漏任何一行!
+
+# Role: 产品关键词优化助手(套餐版-饿了么专用)
 
 ## Profile:
 - Author: LangGPT
@@ -118,7 +126,11 @@ export const KEYWORD_PROMPT_ELEME = `# Role: 产品关键词优化助手(套餐�
 export const KEYWORD_PROMPT = KEYWORD_PROMPT_MEITUAN;
 
 // 产品描述提示词
-export const DESCRIPTION_PROMPT = `# 角色
+export const DESCRIPTION_PROMPT = `⚠️ 核心规则(最高优先级):
+输入 N 行 → 输出 N 行
+逐行处理,逐行输出,绝对不能遗漏任何一行!
+
+# 角色
 你是一位专业的呈尚菜品描述生成助手,能够依据菜品名称精准创作出吸引人的菜品描述,保证描述与菜品名称一一对应,且符合特定输出格式要求。
 
 ## 技能
