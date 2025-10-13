@@ -202,6 +202,7 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
             onDataExtracted={handleDataExtracted}
             columnIndex={3}
             columnName="商品名称"
+            startRow={platform === 'eleme' ? 3 : 1}
           />
         ) : (
           <div className="space-y-3">
@@ -255,7 +256,7 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
             🗑️ 清空
           </button>
         </div>
-      </div>
+        </div>
 
         {/* 结果展示 - 优化设计 */}
         {results.length > 0 && (
@@ -325,11 +326,11 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
             </div>
           </div>
         )}
+      </div>
 
-        {/* 右侧固定侧边栏 */}
-        <div className="hidden xl:block fixed right-8 top-24 w-[380px] max-h-[calc(100vh-120px)] overflow-y-auto">
-          <InfoSidebar type={type} />
-        </div>
+      {/* 右侧固定侧边栏 */}
+      <div className="hidden xl:block fixed right-8 top-24 w-[380px] max-h-[calc(100vh-120px)] overflow-y-auto">
+        <InfoSidebar type={type} />
       </div>
     </div>
   );

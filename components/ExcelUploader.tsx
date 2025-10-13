@@ -8,12 +8,14 @@ interface ExcelUploaderProps {
   onDataExtracted: (data: string[]) => void;
   columnIndex?: number;
   columnName?: string;
+  startRow?: number;
 }
 
 export default function ExcelUploader({
   onDataExtracted,
   columnIndex = 3,
-  columnName = '商品名称'
+  columnName = '商品名称',
+  startRow = 1
 }: ExcelUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -45,8 +47,8 @@ export default function ExcelUploader({
     setError('');
 
     try {
-      // 从指定列提取数据
-      const data = await readExcelColumn(fileToparse, columnIndex);
+      // 从指定列提取数据,传入startRow参数
+      const data = await readExcelColumn(fileToparse, columnIndex, startRow);
 
       if (data.length === 0) {
         throw new Error('未找到有效数据');
@@ -148,7 +150,7 @@ export default function ExcelUploader({
             <p className="font-medium text-blue-900">使用说明:</p>
             <ul className="text-blue-800 space-y-1 list-disc list-inside">
               <li>系统会自动读取第 {columnIndex + 1} 列 ("{columnName}") 的数据</li>
-              <li>第一行将作为表头被跳过</li>
+              <li>从第 {startRow + 1} 行开始读取(跳过前 {startRow} 行表头)</li>
               <li>上传后会自动提取并填充到输入框</li>
               <li>空白单元格会被自动忽略</li>
             </ul>
