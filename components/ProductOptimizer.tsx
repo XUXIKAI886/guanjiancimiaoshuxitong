@@ -125,7 +125,7 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <div className="w-full max-w-5xl mx-auto p-4 space-y-4">
+      <div className="w-full max-w-7xl mx-auto p-4 space-y-4">
         {/* 标题区域 - 紧凑设计 */}
         <div className="text-center space-y-2 py-4">
           <div className="inline-block">
