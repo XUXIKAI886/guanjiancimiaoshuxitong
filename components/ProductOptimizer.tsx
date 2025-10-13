@@ -125,7 +125,7 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <div className="w-full max-w-7xl mx-auto p-4 space-y-4">
+      <div className="w-full max-w-5xl mx-auto p-4 space-y-4">
         {/* 标题区域 - 紧凑设计 */}
         <div className="text-center space-y-2 py-4">
           <div className="inline-block">
@@ -329,7 +329,7 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
       </div>
 
       {/* 右侧固定侧边栏 */}
-      <div className="hidden xl:block fixed right-8 top-24 w-[380px] max-h-[calc(100vh-120px)] overflow-y-auto">
+      <div className="hidden xl:block fixed right-4 top-24 w-[280px] max-h-[calc(100vh-120px)] overflow-y-auto">
         <InfoSidebar type={type} />
       </div>
     </div>
