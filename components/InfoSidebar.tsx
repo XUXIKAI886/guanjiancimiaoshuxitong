@@ -55,13 +55,13 @@ export default function InfoSidebar({ type }: InfoSidebarProps) {
 
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 sticky top-6 hover:shadow-xl transition-shadow">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-          {type === 'keyword' ? '📋 关键词优化说明' : '📋 描述文案说明'}
+      <div className="flex items-center justify-between gap-2 mb-6">
+        <h3 className="text-base font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex-shrink-0">
+          {type === 'keyword' ? '📋 关键词优化' : '📋 描述文案'}
         </h3>
         <button
           onClick={handleCopy}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all duration-300 flex-shrink-0 ${
             copied
               ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
@@ -70,12 +70,12 @@ export default function InfoSidebar({ type }: InfoSidebarProps) {
         >
           {copied ? (
             <>
-              <Check className="w-4 h-4" />
+              <Check className="w-3.5 h-3.5" />
               <span>已复制</span>
             </>
           ) : (
             <>
-              <Copy className="w-4 h-4" />
+              <Copy className="w-3.5 h-3.5" />
               <span>复制</span>
             </>
           )}
