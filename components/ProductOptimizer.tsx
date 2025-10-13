@@ -125,33 +125,33 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <div className="w-full max-w-7xl mx-auto p-6 space-y-8">
-        {/* 标题区域 - 增强视觉效果 */}
-        <div className="text-center space-y-4 py-8">
+      <div className="w-full max-w-7xl mx-auto p-4 space-y-4">
+        {/* 标题区域 - 紧凑设计 */}
+        <div className="text-center space-y-2 py-4">
           <div className="inline-block">
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
               {title}
             </h1>
-            <div className="h-1 mt-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-full"></div>
+            <div className="h-0.5 mt-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-full"></div>
           </div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-sm text-gray-600 max-w-2xl mx-auto">
             批量{type === 'keyword' ? '优化产品关键词' : '生成产品描述'},一键导出Excel和图片
           </p>
         </div>
 
-        {/* 平台切换 - 优化设计 */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 hover:shadow-xl transition-shadow">
-          <div className="flex flex-col sm:flex-row items-center gap-4">
+        {/* 平台切换 - 紧凑设计 */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-white/20 p-4 hover:shadow-lg transition-shadow">
+          <div className="flex flex-col sm:flex-row items-center gap-3">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
-              <span className="text-sm font-semibold text-gray-700">选择平台</span>
+              <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+              <span className="text-xs font-semibold text-gray-700">选择平台</span>
             </div>
-            <div className="flex gap-3 flex-wrap justify-center">
+            <div className="flex gap-2 flex-wrap justify-center">
               <button
                 onClick={() => setPlatform('meituan')}
-                className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                   platform === 'meituan'
-                    ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-lg shadow-yellow-500/50'
+                    ? 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-md'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -159,9 +159,9 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
               </button>
               <button
                 onClick={() => setPlatform('eleme')}
-                className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                   platform === 'eleme'
-                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/50'
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -170,26 +170,26 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
             </div>
           </div>
         </div>
-        {/* 输入区域 - 优化设计 */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow">
-          {/* 切换按钮 - 优化样式 */}
-          <div className="flex gap-3 pb-6 mb-6 border-b-2 border-gray-100">
+        {/* 输入区域 - 紧凑设计 */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-white/20 p-4 hover:shadow-lg transition-shadow">
+          {/* 切换按钮 - 紧凑样式 */}
+          <div className="flex gap-2 pb-4 mb-4 border-b border-gray-100">
             <button
               onClick={() => setShowUploader(true)}
-              className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+              className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                 showUploader
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               📁 上传 Excel
             </button>
             <button
               onClick={() => setShowUploader(false)}
-              className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+              className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
                 !showUploader
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               ✏️ 手动输入
@@ -214,35 +214,35 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={placeholder}
-              className="w-full h-48 p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-300 hover:border-blue-300"
+              className="w-full h-40 p-3 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-300 hover:border-blue-300"
               disabled={loading}
             />
           </div>
         )}
 
-        {/* 错误提示 - 优化样式 */}
+        {/* 错误提示 - 紧凑样式 */}
         {error && (
-          <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg text-red-700 text-sm flex items-start gap-3 animate-shake">
-            <span className="text-xl">⚠️</span>
+          <div className="p-3 bg-red-50 border-l-4 border-red-500 rounded-lg text-red-700 text-xs flex items-start gap-2 animate-shake">
+            <span className="text-base">⚠️</span>
             <span>{error}</span>
           </div>
         )}
 
-        {/* 操作按钮 - 优化设计 */}
-        <div className="flex gap-4 pt-4">
+        {/* 操作按钮 - 紧凑设计 */}
+        <div className="flex gap-3 pt-3">
           <button
             onClick={handleOptimize}
             disabled={loading || !input.trim()}
-            className="flex-1 flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 text-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-300 shadow-md"
           >
             {loading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
                 <span>处理中...</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-5 h-5" />
+                <Sparkles className="w-4 h-4" />
                 <span>开始{type === 'keyword' ? '优化' : '生成'}</span>
               </>
             )}
@@ -251,55 +251,55 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
           <button
             onClick={handleClear}
             disabled={loading}
-            className="px-8 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105"
+            className="px-6 py-3 text-sm bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all duration-300"
           >
             🗑️ 清空
           </button>
         </div>
         </div>
 
-        {/* 结果展示 - 优化设计 */}
+        {/* 结果展示 - 紧凑设计 */}
         {results.length > 0 && (
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-shadow animate-fadeIn">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-md border border-white/20 p-4 hover:shadow-lg transition-shadow animate-fadeIn">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
               <div>
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                   ✨ 结果预览
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">共 {results.length} 条数据</p>
+                <p className="text-xs text-gray-600 mt-0.5">共 {results.length} 条数据</p>
               </div>
 
-              <div className="flex gap-3 flex-wrap">
+              <div className="flex gap-2 flex-wrap">
                 <button
                   onClick={handleExportExcel}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-md"
                 >
-                  <FileSpreadsheet className="w-5 h-5" />
+                  <FileSpreadsheet className="w-4 h-4" />
                   <span>导出Excel</span>
                 </button>
 
                 <button
                   onClick={handleExportImage}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition-all duration-300 shadow-md"
                 >
-                  <ImageIcon className="w-5 h-5" />
+                  <ImageIcon className="w-4 h-4" />
                   <span>导出图片</span>
                 </button>
               </div>
             </div>
 
-            {/* 表格 - 优化样式 */}
-            <div ref={tableRef} className="overflow-x-auto bg-white rounded-xl shadow-inner">
+            {/* 表格 - 紧凑样式 */}
+            <div ref={tableRef} className="overflow-x-auto bg-white rounded-lg shadow-inner">
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-gradient-to-r from-blue-50 to-indigo-50">
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 border-b-2 border-blue-200">
+                    <th className="px-4 py-2.5 text-left text-xs font-bold text-gray-700 border-b-2 border-blue-200">
                       序号
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 border-b-2 border-blue-200">
+                    <th className="px-4 py-2.5 text-left text-xs font-bold text-gray-700 border-b-2 border-blue-200">
                       {type === 'keyword' ? '原关键词' : '原产品名称'}
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-700 border-b-2 border-blue-200">
+                    <th className="px-4 py-2.5 text-left text-xs font-bold text-gray-700 border-b-2 border-blue-200">
                       {type === 'keyword' ? '优化后关键词' : '产品描述'}
                     </th>
                   </tr>
@@ -310,13 +310,13 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
                       key={index}
                       className="hover:bg-blue-50/50 transition-colors duration-200 border-b border-gray-100 last:border-b-0"
                     >
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-500">
+                      <td className="px-4 py-2.5 text-xs font-semibold text-gray-500">
                         {index + 1}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                      <td className="px-4 py-2.5 text-xs text-gray-900">
                         {result.original}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 font-medium">
+                      <td className="px-4 py-2.5 text-xs text-gray-900 font-medium">
                         {result.optimized}
                       </td>
                     </tr>
