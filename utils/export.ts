@@ -235,3 +235,71 @@ export function formatDateTime(): string {
 
   return `${year}${month}${day}_${hour}${minute}${second}`;
 }
+
+/**
+ * 从Excel文件中读取指定列的数据
+ * @param file Excel文件对象
+ * @param columnIndex 列索引(从0开始,第四列为3)
+ * @param startRow 开始行(从0开始,默认为1跳过表头)
+ * @returns 提取的数据数组
+ */
+export async function readExcelColumn(
+  file: File,
+  columnIndex: number = 3,
+  startRow: number = 1
+): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    try {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        try {
+          const data = e.target?.result;
+          if (!data) {
+            throw new Error('文件读取失败');
+          }
+
+          // 读取工作簿
+          const workbook = XLSX.read(data, { type: 'binary' });
+
+          // 获取第一个工作表
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+
+          // 将工作表转换为JSON数组
+          const jsonData: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+          // 提取指定列的数据
+          const columnData: string[] = [];
+          for (let i = startRow; i < jsonData.length; i++) {
+            const row = jsonData[i];
+            if (row && row[columnIndex]) {
+              const value = String(row[columnIndex]).trim();
+              if (value) {
+                columnData.push(value);
+              }
+            }
+          }
+
+          if (columnData.length === 0) {
+            throw new Error(`第${columnIndex + 1}列没有找到有效数据`);
+          }
+
+          resolve(columnData);
+        } catch (error) {
+          console.error('Excel解析失败:', error);
+          reject(new Error('Excel解析失败: ' + (error instanceof Error ? error.message : '未知错误')));
+        }
+      };
+
+      reader.onerror = () => {
+        reject(new Error('文件读取失败'));
+      };
+
+      reader.readAsBinaryString(file);
+    } catch (error) {
+      console.error('读取Excel文件失败:', error);
+      reject(error);
+    }
+  });
+}

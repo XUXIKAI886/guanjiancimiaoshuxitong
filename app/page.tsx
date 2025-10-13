@@ -8,48 +8,65 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<'keyword' | 'description'>('keyword');
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* 导航栏 */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* 导航栏 - 优化设计 */}
+      <nav className="bg-white/80 backdrop-blur-md shadow-lg border-b border-white/20 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">AI</span>
+            <div className="flex items-center space-x-4">
+              {/* Logo */}
+              <div className="relative group">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+                  <span className="text-white font-bold text-2xl">AI</span>
+                </div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-300 -z-10"></div>
               </div>
+
+              {/* 标题 */}
               <div>
-                <h1 className="text-xl font-bold text-gray-900">产品优化助手</h1>
-                <p className="text-xs text-gray-500">AI驱动的智能优化工具</p>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  产品优化助手
+                </h1>
+                <p className="text-xs text-gray-500 font-medium mt-0.5">
+                  ✨ AI驱动的智能优化工具
+                </p>
+              </div>
+            </div>
+
+            {/* 右侧装饰 */}
+            <div className="hidden md:flex items-center gap-2">
+              <div className="px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                <p className="text-xs font-semibold text-blue-700">Powered by Gemini 2.5</p>
               </div>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* 标签页切换 */}
+      {/* 标签页切换 - 优化设计 */}
       <div className="max-w-7xl mx-auto px-6 pt-8">
-        <div className="flex space-x-2 bg-white p-2 rounded-lg shadow-sm w-fit">
+        <div className="inline-flex bg-white/80 backdrop-blur-sm p-2 rounded-2xl shadow-lg border border-white/20">
           <button
             onClick={() => setActiveTab('keyword')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-md font-medium transition-all ${
+            className={`flex items-center gap-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform ${
               activeTab === 'keyword'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                : 'text-gray-600 hover:bg-gray-100 hover:scale-105'
             }`}
           >
             <Tag className="w-5 h-5" />
-            关键词优化
+            <span>关键词优化</span>
           </button>
           <button
             onClick={() => setActiveTab('description')}
-            className={`flex items-center gap-2 px-6 py-3 rounded-md font-medium transition-all ${
+            className={`flex items-center gap-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform ${
               activeTab === 'description'
-                ? 'bg-purple-600 text-white shadow-md'
-                : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg shadow-purple-500/30 scale-105'
+                : 'text-gray-600 hover:bg-gray-100 hover:scale-105'
             }`}
           >
             <FileText className="w-5 h-5" />
-            产品描述生成
+            <span>产品描述生成</span>
           </button>
         </div>
       </div>
@@ -71,13 +88,41 @@ export default function Home() {
         )}
       </div>
 
-      {/* 页脚 */}
-      <footer className="mt-16 py-8 bg-white border-t">
-        <div className="max-w-7xl mx-auto px-6 text-center text-gray-600 text-sm">
-          <p>© 2025 产品优化助手 - 基于 AI 技术驱动</p>
-          <p className="mt-2 text-xs text-gray-500">
-            使用 Next.js + TypeScript + Tailwind CSS 构建
-          </p>
+      {/* 页脚 - 优化设计 */}
+      <footer className="mt-16 py-8 bg-white/80 backdrop-blur-sm border-t border-white/20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center space-y-4">
+            {/* 主要信息 */}
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">AI</span>
+              </div>
+              <p className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                © 2025 产品优化助手
+              </p>
+            </div>
+
+            {/* 技术栈 */}
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <span className="px-3 py-1 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full text-xs font-semibold text-blue-700 border border-blue-100">
+                Next.js 15
+              </span>
+              <span className="px-3 py-1 bg-gradient-to-r from-purple-50 to-pink-50 rounded-full text-xs font-semibold text-purple-700 border border-purple-100">
+                TypeScript
+              </span>
+              <span className="px-3 py-1 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-full text-xs font-semibold text-indigo-700 border border-indigo-100">
+                Tailwind CSS
+              </span>
+              <span className="px-3 py-1 bg-gradient-to-r from-green-50 to-emerald-50 rounded-full text-xs font-semibold text-green-700 border border-green-100">
+                Gemini 2.5
+              </span>
+            </div>
+
+            {/* 版权信息 */}
+            <p className="text-xs text-gray-500">
+              基于 AI 技术驱动 · 让产品优化更简单
+            </p>
+          </div>
         </div>
       </footer>
     </main>
