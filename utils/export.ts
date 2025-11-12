@@ -1,12 +1,23 @@
 import * as XLSX from 'xlsx';
 
 /**
- * 导出数据到Excel
+ * 检测是否在 Tauri 环境中运行
+ * @returns {boolean} true=Tauri环境, false=浏览器环境
+ */
+function isTauriEnvironment(): boolean {
+  return typeof window !== 'undefined' &&
+         typeof (window as any).__TAURI__ !== 'undefined' &&
+         typeof (window as any).__TAURI__.core !== 'undefined' &&
+         typeof (window as any).__TAURI__.core.invoke === 'function';
+}
+
+/**
+ * 导出数据到Excel - 支持浏览器和Tauri双环境
  * @param data 数据数组 [[原文, 优化后], ...]
  * @param filename 文件名
  * @param sheetName 工作表名称
  */
-export function exportToExcel(
+export async function exportToExcel(
   data: string[][],
   filename: string = '导出数据.xlsx',
   sheetName: string = 'Sheet1'
@@ -27,16 +38,77 @@ export function exportToExcel(
     // 添加工作表到工作簿
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
 
-    // 导出文件
-    XLSX.writeFile(wb, filename);
+    // 环境检测
+    const isTauri = isTauriEnvironment();
+
+    if (!isTauri) {
+      // 浏览器环境 - 使用传统方法
+      XLSX.writeFile(wb, filename);
+      console.log('✅ [浏览器] Excel导出成功');
+      return;
+    }
+
+    // Tauri环境 - 使用Tauri API
+    console.log('📊 [Tauri] 开始保存Excel:', filename);
+
+    // 1. 显示文件保存对话框
+    const filePath = await (window as any).__TAURI__.core.invoke('plugin:dialog|save', {
+      options: {
+        defaultPath: filename,
+        title: '保存Excel文件',
+        filters: [{
+          name: 'Excel文件',
+          extensions: ['xlsx', 'xls']
+        }, {
+          name: '所有文件',
+          extensions: ['*']
+        }]
+      }
+    });
+
+    // 2. 用户取消保存
+    if (!filePath) {
+      console.log('⚠️ [Tauri] 用户取消了保存');
+      return;
+    }
+
+    console.log('📁 [Tauri] 选择的保存路径:', filePath);
+
+    // 3. 生成Excel二进制数据
+    const wbout = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'array'
+    });
+
+    // 4. 转换为Uint8Array
+    const bytes = new Uint8Array(wbout);
+    console.log('💾 [Tauri] 准备写入文件, 大小:', bytes.length, 'bytes');
+
+    // 5. 写入文件 (使用3参数格式)
+    await (window as any).__TAURI__.core.invoke(
+      'plugin:fs|write_file',
+      bytes,
+      {
+        headers: {
+          path: encodeURIComponent(filePath),
+          options: JSON.stringify({})
+        }
+      }
+    );
+
+    console.log('✅ [Tauri] Excel保存成功!');
+    alert('Excel文件保存成功!\n保存位置: ' + filePath);
+
   } catch (error) {
     console.error('Excel导出失败:', error);
-    throw new Error('Excel导出失败');
+    const errorMessage = error instanceof Error ? error.message : 'Excel导出失败';
+    alert('导出失败: ' + errorMessage);
+    throw new Error(errorMessage);
   }
 }
 
 /**
- * 将表格数据渲染到Canvas并导出为图片
+ * 将表格数据渲染到Canvas并导出为图片 - 支持浏览器和Tauri双环境
  * @param element 要导出的HTML元素
  * @param filename 文件名
  */
@@ -161,28 +233,90 @@ export async function exportToImage(
       currentY += rowHeight;
     });
 
-    // 将canvas转换为blob并下载
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          throw new Error('图片生成失败');
-        }
+    // 转换为Data URL
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
 
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      },
-      'image/jpeg',
-      0.95
+    // 环境检测
+    const isTauri = isTauriEnvironment();
+
+    if (!isTauri) {
+      // 浏览器环境 - 使用传统下载方法
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            throw new Error('图片生成失败');
+          }
+
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          console.log('✅ [浏览器] 图片导出成功');
+        },
+        'image/jpeg',
+        0.95
+      );
+      return;
+    }
+
+    // Tauri环境 - 使用Tauri API
+    console.log('🖼️ [Tauri] 开始保存图片:', filename);
+
+    // 1. 显示文件保存对话框
+    const filePath = await (window as any).__TAURI__.core.invoke('plugin:dialog|save', {
+      options: {
+        defaultPath: filename,
+        title: '保存图片',
+        filters: [{
+          name: '图片文件',
+          extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif']
+        }]
+      }
+    });
+
+    // 2. 用户取消保存
+    if (!filePath) {
+      console.log('⚠️ [Tauri] 用户取消了保存');
+      return;
+    }
+
+    console.log('📁 [Tauri] 选择的保存路径:', filePath);
+
+    // 3. 转换Base64为字节数组
+    const base64Data = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
+    const binaryString = atob(base64Data);
+    const bytes = new Uint8Array(binaryString.length);
+
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+
+    console.log('💾 [Tauri] 准备写入文件, 大小:', bytes.length, 'bytes');
+
+    // 4. 写入文件 (使用3参数格式)
+    await (window as any).__TAURI__.core.invoke(
+      'plugin:fs|write_file',
+      bytes,
+      {
+        headers: {
+          path: encodeURIComponent(filePath),
+          options: JSON.stringify({})
+        }
+      }
     );
+
+    console.log('✅ [Tauri] 图片保存成功!');
+    alert('图片保存成功!\n保存位置: ' + filePath);
+
   } catch (error) {
     console.error('图片导出失败:', error);
-    throw new Error('图片导出失败');
+    const errorMessage = error instanceof Error ? error.message : '图片导出失败';
+    alert('导出失败: ' + errorMessage);
+    throw new Error(errorMessage);
   }
 }
 

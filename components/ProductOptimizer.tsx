@@ -77,7 +77,7 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
   };
 
   // 导出到Excel
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     if (results.length === 0) {
       setError('没有可导出的数据');
       return;
@@ -88,7 +88,7 @@ export default function ProductOptimizer({ type, title, placeholder }: ProductOp
       const data = [header, ...results.map(r => [r.original, r.optimized])];
       const filename = `${title}_${formatDateTime()}.xlsx`;
 
-      exportToExcel(data, filename);
+      await exportToExcel(data, filename);
     } catch (err) {
       setError('导出Excel失败');
       console.error(err);
