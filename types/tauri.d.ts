@@ -1,7 +1,7 @@
 /**
- * Tauri 全局类型声明
+ * Tauri 全局类型声明 v2.0
  *
- * 用于解决 TypeScript 无法识别 window.__TAURI__ 的问题
+ * 支持 Tauri 1.x 和 2.x 两种 API 结构
  *
  * @file tauri.d.ts
  */
@@ -14,22 +14,21 @@ declare global {
      */
     __TAURI__?: {
       /**
-       * Tauri 核心模块
+       * Tauri 2.x 核心模块
        */
-      core: {
-        /**
-         * 调用 Tauri 后端命令
-         * @param cmd - 命令名称 (格式: "plugin:plugin-name|command" 或自定义命令)
-         * @param args - 命令参数
-         * @returns Promise 返回命令执行结果
-         *
-         * @example
-         * // 调用剪贴板写入
-         * await window.__TAURI__.core.invoke('plugin:clipboard-manager|write_text', { text: 'Hello' });
-         *
-         * // 调用剪贴板读取
-         * const text = await window.__TAURI__.core.invoke<string>('plugin:clipboard-manager|read_text');
-         */
+      core?: {
+        invoke: <T>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
+      };
+
+      /**
+       * Tauri 1.x 直接 invoke
+       */
+      invoke?: <T>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
+
+      /**
+       * Tauri 1.x tauri 模块
+       */
+      tauri?: {
         invoke: <T>(cmd: string, args?: Record<string, unknown>) => Promise<T>;
       };
 
@@ -56,6 +55,11 @@ declare global {
         };
       };
     };
+
+    /**
+     * Tauri 1.x 内部标志
+     */
+    __TAURI_INTERNALS__?: unknown;
   }
 }
 
