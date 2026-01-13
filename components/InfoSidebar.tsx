@@ -45,10 +45,17 @@ export default function InfoSidebar({ type }: InfoSidebarProps) {
   const text = type === 'keyword' ? keywordText : descriptionText;
 
   const handleCopy = async () => {
-    const success = await copyToClipboard(text);
-    if (success) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+    try {
+      const success = await copyToClipboard(text);
+      if (success) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } else {
+        alert('复制失败，请手动选择文字复制');
+      }
+    } catch (error) {
+      console.error('复制出错:', error);
+      alert('复制失败，请手动选择文字复制');
     }
   };
 

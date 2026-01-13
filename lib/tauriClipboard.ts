@@ -99,7 +99,7 @@ function fallbackCopyToClipboard(text: string): boolean {
  *
  * 自动检测运行环境并选择最佳的复制方式：
  * 1. Tauri 本地环境 → Tauri 原生 API
- * 2. 浏览器环境 → Clipboard API
+ * 2. 浏览器/Tauri远程 → Clipboard API
  * 3. 降级方案 → document.execCommand
  *
  * @param {string} text - 要复制的文本内容
@@ -123,44 +123,35 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   const canUseTauri = canUseTauriClipboard();
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
-  console.log('🔍 [剪贴板] 环境检测:', isTauri ? 'Tauri桌面应用' : '浏览器');
-  if (isTauri && !canUseTauri) {
-    console.log('⚠️ [Tauri] 检测到远程URL，使用降级方案:', currentUrl);
-  }
+  console.log('🔍 [剪贴板] 环境检测:', isTauri ? 'Tauri桌面应用' : '浏览器', '| URL:', currentUrl);
 
   // 2. Tauri环境 + 本地URL - 使用 Tauri Clipboard API
   if (canUseTauri) {
     try {
       console.log('📋 [Tauri] 使用原生剪贴板 API');
-
-      // 调用 Tauri Clipboard 插件
       await window.__TAURI__!.core.invoke('plugin:clipboard-manager|write_text', {
         text: text,
       });
-
       console.log('✅ [Tauri] 文本复制成功');
       return true;
     } catch (error) {
-      console.error('❌ [Tauri] 复制失败:', error);
-      // Tauri API 失败时，尝试降级方案
-      return fallbackCopyToClipboard(text);
+      console.error('❌ [Tauri] 复制失败，尝试降级:', error);
     }
   }
 
-  // 3. 浏览器环境 - 尝试 Clipboard API
-  if (!isTauri) {
+  // 3. 尝试浏览器 Clipboard API（适用于浏览器和 Tauri 远程 URL）
+  if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
     try {
       await navigator.clipboard.writeText(text);
-      console.log('✅ [浏览器] 文本复制成功 (Clipboard API)');
+      console.log('✅ [Clipboard API] 文本复制成功');
       return true;
     } catch (error) {
-      console.warn('⚠️ [浏览器] Clipboard API 失败，使用降级方案:', error);
-      // 浏览器环境失败时，尝试降级方案
-      return fallbackCopyToClipboard(text);
+      console.warn('⚠️ [Clipboard API] 失败，尝试降级:', error);
     }
   }
 
-  // 4. Tauri 远程 URL - 直接使用降级方案
+  // 4. 降级方案 - execCommand
+  console.log('📋 [降级] 使用 execCommand');
   return fallbackCopyToClipboard(text);
 }
 
