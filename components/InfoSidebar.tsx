@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
+import { copyToClipboard } from '@/lib/tauriClipboard';
 
 interface InfoSidebarProps {
   type: 'keyword' | 'description';
@@ -44,12 +45,10 @@ export default function InfoSidebar({ type }: InfoSidebarProps) {
   const text = type === 'keyword' ? keywordText : descriptionText;
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
+    const success = await copyToClipboard(text);
+    if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('复制失败:', err);
     }
   };
 
