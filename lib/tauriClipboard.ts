@@ -56,11 +56,20 @@ export function isTauriEnvironment(): boolean {
   // 检测方式 4: 检查 __TAURI_INTERNALS__（Tauri 1.x 标志）
   const hasTauriInternals = typeof window.__TAURI_INTERNALS__ !== 'undefined';
 
-  // 检测方式 5: 检查 User-Agent 是否包含 Tauri 标识
+  // 检测方式 5: 检查 User-Agent 是否包含 WebView 标识
   const userAgent = navigator.userAgent || '';
-  const isTauriUserAgent = userAgent.includes('Tauri') || userAgent.includes('wry');
+  const isTauriUserAgent = userAgent.includes('Tauri') ||
+                           userAgent.includes('wry') ||
+                           userAgent.includes('WebView') ||
+                           // Windows WebView2
+                           userAgent.includes('Edg/') && !userAgent.includes('Chrome/');
 
-  const result = hasTauri2 || hasTauri1Direct || hasTauri1Module || hasTauriInternals || isTauriUserAgent;
+  // 检测方式 6: 检查是否在非标准浏览器环境（可能是 WebView）
+  const isNonStandardBrowser = typeof (window as any).chrome === 'undefined' &&
+                                !userAgent.includes('Firefox') &&
+                                !userAgent.includes('Safari');
+
+  const result = hasTauri2 || hasTauri1Direct || hasTauri1Module || hasTauriInternals || isTauriUserAgent || isNonStandardBrowser;
 
   console.log('🔍 [tauriClipboard] 环境检测详情:', {
     hasTauri2,
@@ -68,8 +77,9 @@ export function isTauriEnvironment(): boolean {
     hasTauri1Module,
     hasTauriInternals,
     isTauriUserAgent,
+    isNonStandardBrowser,
     userAgent: userAgent.substring(0, 100),
-    result: result ? 'Tauri' : '浏览器'
+    result: result ? 'Tauri/WebView' : '浏览器'
   });
 
   return result;
